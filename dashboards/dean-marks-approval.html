@@ -881,6 +881,7 @@
 
         function confirmApprove() {
             const courseCode = document.getElementById('approveCourseCode').textContent;
+            const courseName = document.getElementById('approveCourseName').textContent;
             const comment = document.getElementById('approveComment').value;
             
             console.log(`Approved marks for ${courseCode} with comment: ${comment}`);
@@ -889,13 +890,18 @@
             
             closeApproveModal();
             
-            // Show toast notification
+            // Show toast notification about approval
             showToast(`Marks for ${courseCode} have been approved successfully!`, 'success');
+            
+            // Show toast notification about sending to Registrar
+            setTimeout(() => {
+                showToast(`Report for ${courseCode} has been sent to the Registrar for final processing.`, 'info');
+            }, 1500);
             
             // Refresh the page after a delay
             setTimeout(() => {
                 location.reload();
-            }, 2000);
+            }, 4000);
         }
 
         // Reject Modal

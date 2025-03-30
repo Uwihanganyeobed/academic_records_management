@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Departments - Dean Dashboard</title>
+    <link rel="apple-touch-icon" sizes="180x180" href="../assets/logo.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="../assets/logo.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../assets/logo.png">
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="../dashboard.css">
+    <link rel="stylesheet" href="dean.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Itim&family=Outfit:wght@100..900&display=swap"
+        rel="stylesheet">
+    <style>
+        .filter-bar {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            background-color: var(--card-background);
+            padding: 1rem;
+            border-radius: var(--border-radius);
+            box-shadow: 0 2px 4px var(--shadow-color);
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .filter-label {
+            font-weight: 500;
+            color: var(--text-color);
+        }
+
+        .filter-select {
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--shadow-color);
+            border-radius: var(--border-radius);
+            background-color: var(--background-color);
+            color: var(--text-color);
+            min-width: 150px;
+        }
+
+        .dept-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 2rem;
+            background-color: var(--card-background);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: 0 2px 4px var(--shadow-color);
+        }
+
+        .dept-table th,
+        .dept-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--shadow-color);
+        }
+
+        .dept-table th {
+            background-color: var(--primary-color);
+            color: white;
+            font-weight: 500;
+        }
+
+        .dept-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .dept-table tr {
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .dept-table tr:hover td {
+            background-color: var(--background-color);
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .status-approved {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .status-pending {
+            background-color: #ffc107;
+            color: #000;
+        }
+
+        .status-rejected {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .marks-summary {
+            margin-top: 2rem;
+        }
+
+        .summary-title {
+            font-family: var(--heading-font);
+            color: var(--text-color);
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+
+        .summary-card {
+            background-color: var(--card-background);
+            border-radius: var(--border-radius);
+            box-shadow: 0 2px 4px var(--shadow-color);
+            padding: 1.5rem;
+            text-align: center;
+            transition: var(--transition);
+            cursor: pointer;
+        }
+
+        .summary-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px var(--shadow-color);
+        }
+
+        .summary-value {
+            font-size: 2rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .summary-label {
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        /* Modal styles */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background-color: var(--card-background);
+            border-radius: var(--border-radius);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            padding: 2rem;
+            width: 90%;
+            max-width: 800px;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--text-light);
+            cursor: pointer;
+        }
+
+        .modal-title {
+            font-family: var(--heading-font);
+            color: var(--text-color);
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+    </style>
+</head>
+
+<body class="light-mode">
+    <div class="dashboard-container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <img src="../Assets/logo.png" alt="Logo" class="dashboard-logo">
+                <span class="dashboard-title">AcademiRecord</span>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="dean-dashboard.html" class="nav-item">
+                    <i class="fas fa-th-large"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="dean-marks-approval.html" class="nav-item">
+                    <i class="fas fa-check-circle"></i>
+                    <span>Marks Approval</span>
+                </a>
+                <a href="dean-marks-analysis.html" class="nav-item">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Marks Analysis</span>
+                </a>
+                <a href="dean-departments.html" class="nav-item active">
+                    <i class="fas fa-building"></i>
+                    <span>Departments</span>
+                </a>
+                <a href="dean-hods.html" class="nav-item">
+                    <i class="fas fa-user-tie"></i>
+                    <span>HOD Management</span>
+                </a>
+                <a href="dean-reports.html" class="nav-item">
+                    <i class="fas fa-file-alt"></i>
+                    <span>Reports</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <button class="theme-toggle" title="Toggle dark/light theme">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <button class="logout-btn" onclick="location.href='../login.html'">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </button>
+            </div>
+        </aside>
+
+        <main class="dashboard-main">
+            <header class="dashboard-header">
+                <div class="header-search">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search departments...">
+                </div>
+                <div class="header-right">
+                    <div class="notifications">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-badge">3</span>
+                    </div>
+                    <div class="user-profile" onclick="openUserModal()">
+                        <div class="profile-icon">
+                            <i class="fas fa-user-circle"></i>
+                        </div>
+                        <span class="user-name">Dr. John Smith</span>
+                    </div>
+                </div>
+            </header>
+
+            <div class="dashboard-content">
+                <h1 class="page-title">Departments Marks Overview</h1>
+
+                <div class="filter-bar">
+                    <div>
+                        <span class="filter-label">Academic Year:</span>
+                        <select class="filter-select" id="yearFilter">
+                            <option value="2023-2024">2023-2024</option>
+                            <option value="2022-2023">2022-2023</option>
+                            <option value="2021-2022">2021-2022</option>
+                        </select>
+                    </div>
+                    <div>
+                        <span class="filter-label">Trimester:</span>
+                        <select class="filter-select" id="trimesterFilter">
+                            <option value="1">Trimester 1</option>
+                            <option value="2">Trimester 2</option>
+                            <option value="3">Trimester 3</option>
+                        </select>
+                    </div>
+                </div>
+
+                <table class="dept-table">
+                    <thead>
+                        <tr>
+                            <th>Department</th>
+                            <th>HOD</th>
+                            <th>Courses with Marks</th>
+                            <th>Pending Approval</th>
+                            <th>Last Updated</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr onclick="viewDepartmentMarks('Computer Science')">
+                            <td>Computer Science</td>
+                            <td>Dr. Sarah Johnson</td>
+                            <td>12/15</td>
+                            <td>3</td>
+                            <td>Today, 10:30 AM</td>
+                            <td><span class="status-badge status-pending">Pending</span></td>
+                        </tr>
+                        <tr onclick="viewDepartmentMarks('Electrical Engineering')">
+                            <td>Electrical Engineering</td>
+                            <td>Prof. Michael Chen</td>
+                            <td>10/10</td>
+                            <td>0</td>
+                            <td>Yesterday, 3:45 PM</td>
+                            <td><span class="status-badge status-approved">Approved</span></td>
+                        </tr>
+                        <tr onclick="viewDepartmentMarks('Business Administration')">
+                            <td>Business Administration</td>
+                            <td>Dr. Emily Rodriguez</td>
+                            <td>8/12</td>
+                            <td>4</td>
+                            <td>Today, 9:15 AM</td>
+                            <td><span class="status-badge status-pending">Pending</span></td>
+                        </tr>
+                        <tr onclick="viewDepartmentMarks('Mathematics')">
+                            <td>Mathematics</td>
+                            <td>Dr. Robert Wilson</td>
+                            <td>6/8</td>
+                            <td>2</td>
+                            <td>Yesterday, 11:20 AM</td>
+                            <td><span class="status-badge status-pending">Pending</span></td>
+                        </tr>
+                        <tr onclick="viewDepartmentMarks('Physics')">
+                            <td>Physics</td>
+                            <td>Dr. James Davis</td>
+                            <td>5/5</td>
+                            <td>0</td>
+                            <td>Oct 15, 2023</td>
+                            <td><span class="status-badge status-approved">Approved</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="marks-summary">
+                    <h2 class="summary-title">Marks Submission Summary</h2>
+                    <div class="summary-grid">
+                        <div class="summary-card" onclick="location.href='dean-marks-approval.html'">
+                            <div class="summary-value">9</div>
+                            <div class="summary-label">Pending Approvals</div>
+                        </div>
+                        <div class="summary-card" onclick="location.href='dean-marks-analysis.html'">
+                            <div class="summary-value">41/50</div>
+                            <div class="summary-label">Courses with Marks</div>
+                        </div>
+                        <div class="summary-card" onclick="location.href='dean-marks-analysis.html'">
+                            <div class="summary-value">82%</div>
+                            <div class="summary-label">Overall Pass Rate</div>
+                        </div>
+                        <div class="summary-card" onclick="location.href='dean-marks-analysis.html'">
+                            <div class="summary-value">3.2</div>
+                            <div class="summary-label">Average GPA</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Department Marks Modal -->
+    <div class="modal" id="departmentMarksModal">
+        <div class="modal-content">
+            <button class="close-modal" onclick="closeDepartmentMarksModal()">
+                <i class="fas fa-times"></i>
+            </button>
+            <h2 class="modal-title" id="modalDepartmentName">Department Marks</h2>
+            
+            <table class="dept-table">
+                <thead>
+                    <tr>
+                        <th>Course Code</th>
+                        <th>Course Name</th>
+                        <th>Lecturer</th>
+                        <th>Students</th>
+                        <th>Status</th>
+                        <th>Last Updated</th>
+                    </tr>
+                </thead>
+                <tbody id="modalCoursesList">
+                    <!-- This will be populated by JavaScript -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="../script.js"></script>
+    <script>
+        // Sample data for demonstration
+        const departmentData = {
+            'Computer Science': [
+                { code: 'CS101', name: 'Introduction to Programming', lecturer: 'Dr. Alan Smith', students: 45, status: 'approved', updated: 'Today, 9:30 AM' },
+                { code: 'CS201', name: 'Data Structures', lecturer: 'Dr. Lisa Wong', students: 38, status: 'pending', updated: 'Today, 10:15 AM' },
+                { code: 'CS301', name: 'Database Systems', lecturer: 'Prof. James Miller', students: 32, status: 'pending', updated: 'Yesterday, 2:45 PM' },
+                { code: 'CS401', name: 'Software Engineering', lecturer: 'Dr. Sarah Johnson', students: 28, status: 'approved', updated: 'Oct 16, 2023' }
+            ],
+            'Electrical Engineering': [
+                { code: 'EE101', name: 'Circuit Analysis', lecturer: 'Prof. Michael Chen', students: 40, status: 'approved', updated: 'Yesterday, 1:20 PM' },
+                { code: 'EE201', name: 'Digital Electronics', lecturer: 'Dr. Robert Lee', students: 35, status: 'approved', updated: 'Yesterday, 3:45 PM' },
+                { code: 'EE301', name: 'Signals and Systems', lecturer: 'Dr. Emma White', students: 30, status: 'approved', updated: 'Oct 15, 2023' }
+            ],
+            'Business Administration': [
+                { code: 'BA101', name: 'Principles of Management', lecturer: 'Dr. Emily Rodriguez', students: 55, status: 'approved', updated: 'Today, 8:30 AM' },
+                { code: 'BA201', name: 'Marketing Fundamentals', lecturer: 'Prof. David Brown', students: 48, status: 'pending', updated: 'Today, 9:15 AM' },
+                { code: 'BA301', name: 'Financial Accounting', lecturer: 'Dr. Susan Clark', students: 42, status: 'pending', updated: 'Yesterday, 4:10 PM' }
+            ],
+            'Mathematics': [
+                { code: 'MATH101', name: 'Calculus I', lecturer: 'Dr. Robert Wilson', students: 50, status: 'approved', updated: 'Yesterday, 10:45 AM' },
+                { code: 'MATH201', name: 'Linear Algebra', lecturer: 'Prof. Jennifer Adams', students: 38, status: 'pending', updated: 'Yesterday, 11:20 AM' },
+                { code: 'MATH301', name: 'Differential Equations', lecturer: 'Dr. Thomas Green', students: 32, status: 'approved', updated: 'Oct 14, 2023' }
+            ],
+            'Physics': [
+                { code: 'PHYS101', name: 'Mechanics', lecturer: 'Dr. James Davis', students: 45, status: 'approved', updated: 'Oct 15, 2023' },
+                { code: 'PHYS201', name: 'Electromagnetism', lecturer: 'Prof. Laura Martinez', students: 38, status: 'approved', updated: 'Oct 14, 2023' },
+                { code: 'PHYS301', name: 'Quantum Physics', lecturer: 'Dr. Richard Taylor', students: 30, status: 'approved', updated: 'Oct 13, 2023' }
+            ]
+        };
+
+        function viewDepartmentMarks(department) {
+            // Set the department name in the modal
+            document.getElementById('modalDepartmentName').textContent = department + ' Department Marks';
+            
+            // Get the courses for this department
+            const courses = departmentData[department];
+            
+            // Clear the current list
+            const coursesList = document.getElementById('modalCoursesList');
+            coursesList.innerHTML = '';
+            
+            // Add each course to the list
+            courses.forEach(course => {
+                const row = document.createElement('tr');
+                row.onclick = function() { 
+                    location.href = `dean-marks-approval.html?course=${course.code}`; 
+                };
+                
+                row.innerHTML = `
+                    <td>${course.code}</td>
+                    <td>${course.name}</td>
+                    <td>${course.lecturer}</td>
+                    <td>${course.students}</td>
+                    <td><span class="status-badge status-${course.status}">${course.status.charAt(0).toUpperCase() + course.status.slice(1)}</span></td>
+                    <td>${course.updated}</td>
+                `;
+                
+                coursesList.appendChild(row);
+            });
+            
+            // Show the modal
+            document.getElementById('departmentMarksModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeDepartmentMarksModal() {
+            document.getElementById('departmentMarksModal').classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Filter functionality
+        document.getElementById('yearFilter').addEventListener('change', function() {
+            console.log('Academic Year:', this.value);
+            // Here you would implement the logic to filter by academic year
+        });
+
+        document.getElementById('trimesterFilter').addEventListener('change', function() {
+            console.log('Trimester:', this.value);
+            // Here you would implement the logic to filter by trimester
+        });
+
+        // Close modal when clicking outside
+        document.getElementById('departmentMarksModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeDepartmentMarksModal();
+            }
+        });
+    </script>
+</body>
+
+</html>

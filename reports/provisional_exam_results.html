@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Provisional Examination Results</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            width: 25cm;
+            margin: auto;
+            background-color: white;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-direction: row;
+            gap: 20px;
+            margin-bottom: 10px;
+        }
+        .header img {
+            width: 120px;
+            height: auto;
+        }
+        .header h2 {
+            flex-grow: 1;
+            text-align: center;
+            color: #01507C;
+            font-size: 20px;
+            flex: 1;
+
+        }
+        .header h1 {
+            color: #00457C;
+            flex: 0.4;
+            font-size: 20px;
+            margin: 0;
+        }
+        .department-info {
+            margin: 5px 0;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        .program-info {
+            margin: 5px 0;
+            font-size: 14px;
+        }
+        .stats-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 2rem 0;
+            font-size: 14px;
+        }
+        .stats-table th, .stats-table td {
+            border: 1px solid #000;
+            padding: 7px;
+            text-align: left;
+        }
+        .stats-table th {
+            background-color: #f0f0f0;
+        }
+        .modules-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            font-size: 14px;
+        }
+        .modules-table th, .modules-table td {
+            border: 1px solid #000;
+            padding: 6px;
+            text-align: left;
+        }
+        .modules-table th {
+            background-color: #f0f0f0;
+            text-align: center;
+        }
+        .approval-section {
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        .approval-table {
+            width: 50%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        .approval-table th, .approval-table td {
+            border: 1px solid #000;
+            padding: 6px;
+        }
+        .signature-section {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+        .signature-box {
+            text-align: center;
+            width: 45%;
+        }
+        .signature-line {
+            border-top: 1px solid #000;
+            margin-top: 40px;
+            padding-top: 5px;
+        }
+        hr.blue-line {
+            border: none;
+            height: 2px;
+            background-color: #00457C;
+            margin: 15px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="/assets/logo.png" alt="University of Rwanda Logo">
+                <h1>UNIVERSITY OF RWANDA</h1>
+                <h2>COLLEGE OF SCIENCE AND TECHNOLOGY</h2>
+        </div>
+        <hr class="blue-line">
+
+        <div class="department-info">
+            <p>SCHOOL OF ENGINEERING</p>
+            <p>DEPARTMENT OF CIVIL, ENVIRONMENTAL AND GEOMATICS ENGINEERING (CEGE)</p>
+            <p>PROGRAM: BSc (Hons) IN CIVIL ENGINEERING, WATER RESOURCES ENGINEERING</p>
+            <p>PROVISIONAL EXAMINATION RESULTS, TRIMESTER ONE: ACADEMIC YEAR 2021-2022</p>
+            <p>YEAR 3</p>
+        </div>
+
+        <table class="stats-table">
+            <tr>
+                <th>TOTAL NUMBER OF STUDENTS</th>
+                <th>F</th>
+                <th>M</th>
+                <th>TOT</th>
+                <th>%F</th>
+                <th>%M</th>
+                <th>%TOT</th>
+            </tr>
+            <tr>
+                <td>Total number of students registered</td>
+                <td>27</td>
+                <td>35</td>
+                <td>62</td>
+                <td>43.55%</td>
+                <td>56.45%</td>
+                <td>100.00%</td>
+            </tr>
+            <tr>
+                <td>Total number of students who sat for exams</td>
+                <td>27</td>
+                <td>35</td>
+                <td>62</td>
+                <td>43.55%</td>
+                <td>56.45%</td>
+                <td>100.00%</td>
+            </tr>
+            <tr>
+                <td>Total number of students to pass</td>
+                <td>16</td>
+                <td>22</td>
+                <td>38</td>
+                <td>25.81%</td>
+                <td>35.48%</td>
+                <td>61.23%</td>
+            </tr>
+            <tr>
+                <td>Total number of students to retake</td>
+                <td>11</td>
+                <td>13</td>
+                <td>24</td>
+                <td>17.74%</td>
+                <td>20.97%</td>
+                <td>38.71%</td>
+            </tr>
+            <tr>
+                <td>Total number of students discontinued</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0.00%</td>
+                <td>0.00%</td>
+                <td>0.00%</td>
+            </tr>
+            <tr>
+                <td>Total number of students who absconded</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0.00%</td>
+                <td>0.00%</td>
+                <td>0.00%</td>
+            </tr>
+            <tr>
+                <td>Total number of students who suspended</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0.00%</td>
+                <td>0.00%</td>
+                <td>0.00%</td>
+            </tr>
+            <tr>
+                <td>Principal's Roll of Honour</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                <td>0.00%</td>
+                <td>0.00%</td>
+                <td>0.00%</td>
+            </tr>
+        </table>
+
+        <table class="modules-table">
+            <tr>
+                <th>TRIMESTER</th>
+                <th>MODULE CODE</th>
+                <th>MODULE TITLE</th>
+                <th>AVERAGE SCORE (%)</th>
+                <th>SD</th>
+                <th>NUMBER OF REGISTERED STUDENTS</th>
+                <th>NUMBER OF STUDENTS WHO SAT FOR EXAM</th>
+                <th>PASS</th>
+                <th>RETAKE</th>
+            </tr>
+            <tr>
+                <td rowspan="8">I</td>
+                <td>SCE3161</td>
+                <td>Research Methodology</td>
+                <td>67.44</td>
+                <td>6.42</td>
+                <td>62</td>
+                <td>62</td>
+                <td>60</td>
+                <td>2</td>
+            </tr>
+            <tr>
+                <td>CWE3161</td>
+                <td>Hydraulic Structures I</td>
+                <td>56.04</td>
+                <td>7.65</td>
+                <td>62</td>
+                <td>62</td>
+                <td>52</td>
+                <td>10</td>
+            </tr>
+            <tr>
+                <td>CWE3162</td>
+                <td>Hydraulics Engineering</td>
+                <td>69.77</td>
+                <td>7.54</td>
+                <td>62</td>
+                <td>62</td>
+                <td>62</td>
+                <td>0</td>
+            </tr>
+            <tr>
+                <td>CEE3161</td>
+                <td>Water Treatment Engineering</td>
+                <td>75.02</td>
+                <td>5.70</td>
+                <td>62</td>
+                <td>62</td>
+                <td>62</td>
+                <td>0</td>
+            </tr>
+            <tr>
+                <td>CSE3161</td>
+                <td>Design of Reinforced Concrete Structures I</td>
+                <td>56.24</td>
+                <td>7.58</td>
+                <td>62</td>
+                <td>62</td>
+                <td>54</td>
+                <td>8</td>
+            </tr>
+            <tr>
+                <td>CCE3161</td>
+                <td>Elements of Quantity Surveying</td>
+                <td>65.71</td>
+                <td>8.46</td>
+                <td>62</td>
+                <td>62</td>
+                <td>61</td>
+                <td>1</td>
+            </tr>
+            <tr>
+                <td>CCE3162</td>
+                <td>Highway Engineering</td>
+                <td>59.73</td>
+                <td>5.97</td>
+                <td>62</td>
+                <td>62</td>
+                <td>62</td>
+                <td>0</td>
+            </tr>
+            <tr>
+                <td>CGE3162</td>
+                <td>Soil Mechanics</td>
+                <td>69.85</td>
+                <td>10.49</td>
+                <td>62</td>
+                <td>62</td>
+                <td>61</td>
+                <td>1</td>
+            </tr>
+        </table>
+
+        <div class="approval-section">
+            <h3>APPROVAL DETAILS</h3>
+            <table class="approval-table">
+                <tr>
+                    <th>BOARD</th>
+                    <th>DATE</th>
+                </tr>
+                <tr>
+                    <td>DEPARTMENT COUNCIL</td>
+                    <td>15/10/2021</td>
+                </tr>
+                <tr>
+                    <td>SCHOOL COUNCIL</td>
+                    <td>22/10/2021</td>
+                </tr>
+                <tr>
+                    <td>COLLEGE ACADEMIC COUNCIL</td>
+                    <td></td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="signature-section">
+            <p><strong>SIGNED</strong></p>
+            <div class="signature-box">
+                <p>Dr. Abaho G. Gershome</p>
+                <div class="signature-line">HEAD OF THE DEPARTMENT</div>
+            </div>
+            <div class="signature-box">
+                <p>Prof. Umaru Garba Wali</p>
+                <div class="signature-line">DEAN</div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Academic Transcript</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            width: 30cm;
+            margin: auto;
+            background-color: white;
+            padding: 15px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            overflow-x: auto;
+        }
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+            position: relative;
+        }
+        .header {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            flex: 1;
+        }
+        .header img {
+            width: 100px;
+            height: auto;
+        }
+        .header-text {
+            text-align: center;
+            flex-grow: 1;
+        }
+        .header-text h1 {
+            color: #00457C;
+            font-size: 20px;
+            margin: 5px 0;
+            font-weight: bold;
+        }
+        .header-text h2 {
+            font-size: 18px;
+            margin: 5px 0;
+        }
+        .header-text h3, .header-text h4 {
+            font-size: 16px;
+            margin: 5px 0;
+        }
+        .student-info {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        .student-info td,th {
+            border: 1px solid #000;
+            padding: 6px;
+            font-size: 13px;
+        }
+        .photo-area {
+            width: 100px;
+            height: 120px;
+            border: 1px solid #000;
+            margin-left: 20px;
+        }
+        .photo-area img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .grades-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 10px 0;
+            font-size: 12px;
+            table-layout: fixed;
+        }
+        .grades-table th, .grades-table td {
+            border: 1px solid #000;
+            padding: 4px;
+            text-align: center;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            font-size: 12px;
+        }
+        .grades-table th:nth-child(4n+1),
+        .grades-table td:nth-child(4n+1) {
+            width: 5%;
+        }
+        .grades-table th:nth-child(4n+2),
+        .grades-table td:nth-child(4n+2) {
+            width: 5%;
+        }
+        .grades-table th:nth-child(4n+3),
+        .grades-table td:nth-child(4n+3) {
+            width: 5%;
+        }
+        .grades-table th:nth-child(4n),
+        .grades-table td:nth-child(4n) {
+            width: 5%;
+        }
+        .semester-header {
+            background-color: #d5dbe1;
+            font-weight: bold;
+            text-align: center;
+        }
+        .total-row {
+            font-weight: bold;
+            background-color: #f0f0f0;
+        }
+        .annual-average {
+            font-style: italic;
+        }
+        .summary {
+            margin-top: 20px;
+            font-size: 14px;
+        }
+        .signature-section {
+            margin-top: 50px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .signature-box {
+            text-align: center;
+            width: 45%;
+        }
+        .signature-line {
+            border-top: 1px solid #000;
+            margin-top: 40px;
+            padding-top: 5px;
+        }
+        .notes {
+            margin-top: 20px;
+            font-size: 14px;
+        }
+        .total-row td, .annual-average td {
+            white-space: nowrap;
+            font-weight: bold;
+        }
+        @media screen and (max-width: 1200px) {
+            .container {
+                width: 95%;
+                padding: 10px;
+            }
+            
+            .grades-table {
+                font-size: 12px;
+            }
+            
+            .grades-table th, .grades-table td {
+                padding: 4px;
+            }
+        }
+        .bottom-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: stretch;
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            gap: 2rem;
+        }
+        .summary {
+            flex: 1;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .summary p {
+            margin: 6px 0;
+            font-size: 12px;
+            line-height: 1.5;
+        }
+        .signature-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 40px;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .signature-box {
+            width: 100%;
+            text-align: center;
+        }
+        .signature-line {
+            border-top: 2px solid #000;
+            margin-top: 40px;
+            padding-top: 8px;
+            font-weight: bold;
+        }
+        .notes {
+            flex: 1;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .notes p {
+            margin: 6px 0;
+            font-weight: bold;
+        }
+        .notes ul {
+            margin: 8px 0;
+            padding-left: 20px;
+        }
+        .notes li {
+            margin: 6px 0;
+            font-size: 12px;
+            line-height: 1.4;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header-container">
+            <div class="header">
+                <img src="/assets/logo.png" alt="University Logo">
+                <div class="header-text">
+                    <h1>COLLEGE OF SCIENCE AND TECHNOLOGY</h1>
+                    <h2>School of Engineering</h2>
+                    <h3>Academic Transcript</h3>
+                    <h4>BACHELOR OF SCIENCE WITH HONOURS IN CIVIL ENGINEERING</h4>
+                    <h4>(WATER RESOURCES ENGINEERING)</h4>
+                </div>
+            </div>
+            <div class="photo-area">
+                <img src="/assets/user.png" alt="">
+            </div>
+        </div>
+
+        <table class="student-info">
+            <tr>
+                <th><strong>Name:</strong></th>
+                <th><strong>Registration Number:</strong></th>
+                <th><strong>Transcript Number:</strong></th>
+            </tr>
+            <tr>
+                <td>AKIMANIZANYE LATIFA</td>
+                <td>219008552</td>
+                <td>CE/WRE/2022/001</td>
+            </tr>
+        </table>
+
+        <table class="grades-table">
+            <tr>
+                <th colspan="4">YEAR I - Semester I (2018-2019)</th>
+                <th colspan="4">YEAR II - Semester I (2019-2020)</th>
+                <th colspan="4">YEAR III - Semester I (2020-2021)</th>
+                <th colspan="4">YEAR IV - Semester I (2021-2022)</th>
+            </tr>
+            <tr>
+                <th>Code</th>
+                <th>CU</th>
+                <th>Marks (%)</th>
+                <th>Grades</th>
+                <th>Code</th>
+                <th>CU</th>
+                <th>Marks (%)</th>
+                <th>Grades</th>
+                <th>Code</th>
+                <th>CU</th>
+                <th>Marks (%)</th>
+                <th>Grades</th>
+                <th>Code</th>
+                <th>CU</th>
+                <th>Marks (%)</th>
+                <th>Grades</th>
+            </tr>
+            <tr>
+                <td>MAT1164</td>
+                <td>10</td>
+                <td>89.00</td>
+                <td>A</td>
+                <td>MAT2165</td>
+                <td>10</td>
+                <td>89.00</td>
+                <td>A</td>
+                <td>SOE3161</td>
+                <td>10</td>
+                <td>88.00</td>
+                <td>A</td>
+                <td>SOE4161</td>
+                <td>5</td>
+                <td>72.70</td>
+                <td>B</td>
+            </tr>
+            <tr>
+                <td>PHY1163</td>
+                <td>10</td>
+                <td>89.00</td>
+                <td>A</td>
+                <td>MEE2165</td>
+                <td>10</td>
+                <td>89.00</td>
+                <td>A</td>
+                <td>CWE3161</td>
+                <td>5</td>
+                <td>88.00</td>
+                <td>A</td>
+                <td>CWE4161</td>
+                <td>10</td>
+                <td>65.00</td>
+                <td>C</td>
+            </tr>
+            <tr>
+                <td>MAT1164</td>
+                <td>10</td>
+                <td>89.00</td>
+                <td>A</td>
+                <td>MAT2165</td>
+                <td>10</td>
+                <td>89.00</td>
+                <td>A</td>
+                <td>SOE3161</td>
+                <td>10</td>
+                <td>88.00</td>
+                <td>A</td>
+                <td>SOE4161</td>
+                <td>5</td>
+                <td>72.70</td>
+                <td>B</td>
+            </tr>
+            <tr>
+                <td>MAT1164</td>
+                <td>10</td>
+                <td>89.00</td>
+                <td>A</td>
+                <td>MAT2165</td>
+                <td>10</td>
+                <td>89.00</td>
+                <td>A</td>
+                <td>SOE3161</td>
+                <td>10</td>
+                <td>88.00</td>
+                <td>A</td>
+                <td>SOE4161</td>
+                <td>5</td>
+                <td>72.70</td>
+                <td>B</td>
+            </tr>
+            <tr>
+                <td>MAT1164</td>
+                <td>10</td>
+                <td>89.00</td>
+                <td>A</td>
+                <td>MAT2165</td>
+                <td>10</td>
+                <td>89.00</td>
+                <td>A</td>
+                <td>SOE3161</td>
+                <td>10</td>
+                <td>88.00</td>
+                <td>A</td>
+                <td>SOE4161</td>
+                <td>5</td>
+                <td>72.70</td>
+                <td>B</td>
+            </tr>
+            <tr>
+                <td>MAT1164</td>
+                <td>10</td>
+                <td>89.00</td>
+                <td>A</td>
+                <td>MAT2165</td>
+                <td>10</td>
+                <td>89.00</td>
+                <td>A</td>
+                <td>SOE3161</td>
+                <td>10</td>
+                <td>88.00</td>
+                <td>A</td>
+                <td>SOE4161</td>
+                <td>5</td>
+                <td>72.70</td>
+                <td>B</td>
+            </tr>
+            <tr>
+                <td>MAT1164</td>
+                <td>10</td>
+                <td>89.00</td>
+                <td>A</td>
+                <td>MAT2165</td>
+                <td>10</td>
+                <td>89.00</td>
+                <td>A</td>
+                <td>SOE3161</td>
+                <td>10</td>
+                <td>88.00</td>
+                <td>A</td>
+                <td>SOE4161</td>
+                <td>5</td>
+                <td>72.70</td>
+                <td>B</td>
+            </tr>
+            
+        </table>
+
+        <table class="grades-table">
+            <tr>
+                <th colspan="4">YEAR I - Semester II (2018-2019)</th>
+                <th colspan="4">YEAR II - Semester II (2019-2020)</th>
+                <th colspan="4">YEAR III - Semester II (2020-2021)</th>
+                <th colspan="4">YEAR IV - Semester II (2021-2022)</th>
+            </tr>
+            <tr>
+                <th>Code</th>
+                <th>CU</th>
+                <th>Marks (%)</th>
+                <th>Grades</th>
+                <th>Code</th>
+                <th>CU</th>
+                <th>Marks (%)</th>
+                <th>Grades</th>
+                <th>Code</th>
+                <th>CU</th>
+                <th>Marks (%)</th>
+                <th>Grades</th>
+                <th>Code</th>
+                <th>CU</th>
+                <th>Marks (%)</th>
+                <th>Grades</th>
+            </tr>
+            <tr>
+                <td>PHY1263</td>
+                <td>10</td>
+                <td>89.00</td>
+                <td>A</td>
+                <td>EAP2111</td>
+                <td>20</td>
+                <td>67.00</td>
+                <td>C</td>
+                <td>CSE3260</td>
+                <td>10</td>
+                <td>82.37</td>
+                <td>A</td>
+                <td>SOE4260</td>
+                <td>10</td>
+                <td>77.80</td>
+                <td>B</td>
+            </tr>
+            <tr>
+                <td>ESP1111</td>
+                <td>10</td>
+                <td>89.00</td>
+                <td>A</td>
+                <td>MAT2165</td>
+                <td>10</td>
+                <td>89.00</td>
+                <td>A</td>
+                <td>SOE3161</td>
+                <td>10</td>
+                <td>88.00</td>
+                <td>A</td>
+                <td>SOE4161</td>
+                <td>5</td>
+                <td>72.70</td>
+                <td>B</td>
+            </tr>
+            <tr>
+                <td>ESP1111</td>
+                <td>10</td>
+                <td>89.00</td>
+                <td>A</td>
+                <td>MAT2165</td>
+                <td>10</td>
+                <td>89.00</td>
+                <td>A</td>
+                <td>SOE3161</td>
+                <td>10</td>
+                <td>88.00</td>
+                <td>A</td>
+                <td>SOE4161</td>
+                <td>5</td>
+                <td>72.70</td>
+                <td>B</td>
+            </tr>
+            <tr>
+                <td>ESP1111</td>
+                <td>10</td>
+                <td>89.00</td>
+                <td>A</td>
+                <td>MAT2165</td>
+                <td>10</td>
+                <td>89.00</td>
+                <td>A</td>
+                <td>SOE3161</td>
+                <td>10</td>
+                <td>88.00</td>
+                <td>A</td>
+                <td>SOE4161</td>
+                <td>5</td>
+                <td>72.70</td>
+                <td>B</td>
+            </tr>
+            <tr>
+                <td>ESP1111</td>
+                <td>10</td>
+                <td>89.00</td>
+                <td>A</td>
+                <td>MAT2165</td>
+                <td>10</td>
+                <td>89.00</td>
+                <td>A</td>
+                <td>SOE3161</td>
+                <td>10</td>
+                <td>88.00</td>
+                <td>A</td>
+                <td>SOE4161</td>
+                <td>5</td>
+                <td>72.70</td>
+                <td>B</td>
+            </tr>
+            <tr>
+                <td>ESP1111</td>
+                <td>10</td>
+                <td>89.00</td>
+                <td>A</td>
+                <td>MAT2165</td>
+                <td>10</td>
+                <td>89.00</td>
+                <td>A</td>
+                <td>SOE3161</td>
+                <td>10</td>
+                <td>88.00</td>
+                <td>A</td>
+                <td>SOE4161</td>
+                <td>5</td>
+                <td>72.70</td>
+                <td>B</td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td>SOE4161</td>
+                <td>5</td>
+                <td>72.70</td>
+                <td>B</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr class="total-row">
+                <td>TOTAL</td>
+                <td>70</td>
+                <td colspan="2"></td>
+                <td></td>
+                <td>71</td>
+                <td colspan="2"></td>
+                <td></td>
+                <td>59</td>
+                <td colspan="2"></td>
+                <td></td>
+                <td>73</td>
+                <td colspan="2"></td>
+            </tr>
+            <tr class="annual-average">
+                <td colspan="2">Annual average (%): </td>
+                <td colspan="2">53.4</td>
+                <td colspan="2"></td>
+                <td colspan="2">71.0</td>
+                <td colspan="2"></td>
+                <td colspan="2">90.7</td>
+                <td colspan="2"></td>
+                <td colspan="2">67.0</td>
+           
+            </tr>
+        </table>
+
+        <div class="bottom-section">
+            <div class="summary">
+                <p><strong>Tot. Credit Units:</strong> 535</p>
+                <p><strong>Cumulative AV (%):</strong> 99.00</p>
+                <p><strong>Degree Class:</strong> SECOND CLASS HONOURS, LOWER DIVISION</p>
+                <p><strong>AY of completion:</strong> 2021-2022</p>
+                <p><strong>Printed on:</strong> October 29, 2024</p>
+            </div>
+
+            <div class="signature-section">
+                <div class="signature-box">
+                    <div class="signature-line">College Registrar</div>
+                </div>
+                <div class="signature-box">
+                    <div class="signature-line">Principal</div>
+                </div>
+            </div>
+
+            <div class="notes">
+                <p>NOTE:</p>
+                <ul>
+                    <li>This is a 4-year programme</li>
+                    <li>See overleaf for used codes and degree classification scale</li>
+                    <li>The photograph is printed not affixed</li>
+                    <li>Not valid without official stamp</li>
+                    <li>Embedded security features:
+                        <ul>
+                            <li>(i) Naked eye visible</li>
+                            <li>(ii) Machine only visible</li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 

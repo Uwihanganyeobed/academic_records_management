@@ -1,0 +1,1256 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dean Dashboard - Academic Record Management</title>
+    <link rel="apple-touch-icon" sizes="180x180" href="../assets/logo.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="../assets/logo.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../assets/logo.png">
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="../dashboard.css">
+    <link rel="stylesheet" href="dean.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Itim&family=Outfit:wght@100..900&display=swap"
+        rel="stylesheet">
+    <style>
+        .filter-bar {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            background-color: var(--card-background);
+            padding: 1rem;
+            border-radius: var(--border-radius);
+            box-shadow: 0 2px 4px var(--shadow-color);
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .filter-label {
+            font-weight: 500;
+            color: var(--text-color);
+        }
+
+        .filter-select {
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--shadow-color);
+            border-radius: var(--border-radius);
+            background-color: var(--background-color);
+            color: var(--text-color);
+            min-width: 150px;
+        }
+
+        .marks-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 2rem;
+            background-color: var(--card-background);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: 0 2px 4px var(--shadow-color);
+        }
+
+        .marks-table th,
+        .marks-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--shadow-color);
+        }
+
+        .marks-table th {
+            background-color: var(--primary-color);
+            color: white;
+            font-weight: 500;
+        }
+
+        .marks-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .marks-table tr:hover td {
+            background-color: var(--background-color);
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .status-approved {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .status-pending {
+            background-color: #ffc107;
+            color: #000;
+        }
+
+        .status-rejected {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .action-btn {
+            padding: 0.5rem;
+            border: none;
+            border-radius: var(--border-radius);
+            background-color: var(--background-color);
+            color: var(--text-color);
+            cursor: pointer;
+            transition: var(--transition);
+            margin-right: 0.5rem;
+        }
+
+        .action-btn:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .action-btn.approve {
+            background-color: #e6f7ee;
+            color: #28a745;
+        }
+
+        .action-btn.approve:hover {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .action-btn.reject {
+            background-color: #fde8ea;
+            color: #dc3545;
+        }
+
+        .action-btn.reject:hover {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .summary-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .summary-card {
+            background-color: var(--card-background);
+            border-radius: var(--border-radius);
+            box-shadow: 0 2px 4px var(--shadow-color);
+            padding: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .summary-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            color: white;
+        }
+
+        .summary-icon.pending {
+            background-color: #ffc107;
+        }
+
+        .summary-icon.approved {
+            background-color: #28a745;
+        }
+
+        .summary-icon.rejected {
+            background-color: #dc3545;
+        }
+
+        .summary-icon.total {
+            background-color: var(--primary-color);
+        }
+
+        .summary-info h3 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: var(--text-color);
+            margin-bottom: 0.3rem;
+        }
+
+        .summary-info p {
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        .user-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .user-modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .user-modal-content {
+            background-color: var(--card-background);
+            border-radius: var(--border-radius);
+            width: 90%;
+            max-width: 500px;
+            padding: 2rem;
+            position: relative;
+            transform: translateY(-20px);
+            transition: all 0.3s ease;
+        }
+
+        .user-modal.active .user-modal-content {
+            transform: translateY(0);
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--text-light);
+            cursor: pointer;
+        }
+
+        .close-modal:hover {
+            color: var(--text-color);
+        }
+
+        .user-modal-header {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--shadow-color);
+        }
+
+        .user-modal-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background-color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            color: white;
+        }
+
+        .user-modal-info h3 {
+            font-size: 1.5rem;
+            margin: 0 0 0.5rem 0;
+            color: var(--text-color);
+        }
+
+        .user-modal-role {
+            color: var(--text-light);
+            font-size: 0.9rem;
+            background-color: var(--background-color);
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+        }
+
+        .user-modal-tabs {
+            display: flex;
+            border-bottom: 1px solid var(--shadow-color);
+            margin-bottom: 1.5rem;
+        }
+
+        .user-modal-tab {
+            padding: 0.8rem 1.5rem;
+            cursor: pointer;
+            color: var(--text-light);
+            font-weight: 500;
+            position: relative;
+            transition: var(--transition);
+        }
+
+        .user-modal-tab:hover {
+            color: var(--primary-color);
+        }
+
+        .user-modal-tab.active {
+            color: var(--primary-color);
+        }
+
+        .user-modal-tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background-color: var(--primary-color);
+            border-radius: 3px 3px 0 0;
+        }
+
+        .user-modal-content-tab {
+            display: none;
+        }
+
+        .user-modal-content-tab.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--text-color);
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border: 1px solid var(--shadow-color);
+            border-radius: var(--border-radius);
+            background-color: var(--background-color);
+            color: var(--text-color);
+            font-size: 1rem;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(var(--primary-rgb), 0.2);
+        }
+
+        .form-group input[readonly] {
+            background-color: var(--background-color);
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .cancel-btn, .save-btn {
+            padding: 0.8rem 1.5rem;
+            border-radius: var(--border-radius);
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .cancel-btn {
+            background-color: var(--background-color);
+            color: var(--text-color);
+            border: 1px solid var(--shadow-color);
+        }
+
+        .cancel-btn:hover {
+            background-color: var(--shadow-color);
+        }
+
+        .save-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+        }
+
+        .save-btn:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .toggle-option {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--shadow-color);
+        }
+
+        .toggle-option:last-child {
+            border-bottom: none;
+        }
+
+        .toggle-label {
+            font-weight: 500;
+            color: var(--text-color);
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--shadow-color);
+            transition: .4s;
+            border-radius: 24px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .toggle-slider {
+            background-color: var(--primary-color);
+        }
+
+        input:checked + .toggle-slider:before {
+            transform: translateX(26px);
+        }
+
+        /* Enhanced styling for course details modal */
+        .course-details {
+            margin: 1.5rem 0;
+        }
+        
+        .course-details .form-group {
+            display: flex;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid var(--shadow-color);
+            padding-bottom: 0.8rem;
+        }
+        
+        .course-details .form-group:last-child {
+            border-bottom: none;
+        }
+        
+        .course-details label {
+            font-weight: 500;
+            width: 120px;
+            color: var(--text-light);
+        }
+        
+        .course-details p {
+            margin: 0;
+            flex: 1;
+            font-weight: 500;
+            color: var(--text-color);
+        }
+        
+        .modal-title {
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        
+        .modal-btn {
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: var(--transition);
+            font-weight: 500;
+        }
+        
+        .modal-btn.approve {
+            background-color: #28a745;
+            color: white;
+        }
+        
+        .modal-btn.reject {
+            background-color: #dc3545;
+            color: white;
+        }
+        
+        .status-indicator {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        /* Toast notifications */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: var(--card-background);
+            border-radius: var(--border-radius);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            min-width: 300px;
+            max-width: 400px;
+            z-index: 1100;
+            animation: slideIn 0.3s ease forwards;
+        }
+
+        .toast-content {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .toast-content i {
+            font-size: 1.2rem;
+        }
+
+        .toast-success {
+            border-left: 4px solid #28a745;
+        }
+
+        .toast-success i {
+            color: #28a745;
+        }
+
+        .toast-error {
+            border-left: 4px solid #dc3545;
+        }
+
+        .toast-error i {
+            color: #dc3545;
+        }
+
+        .toast-info {
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .toast-info i {
+            color: var(--primary-color);
+        }
+
+        .toast-close {
+            background: none;
+            border: none;
+            color: var(--text-light);
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+
+<body class="light-mode">
+    <div class="dashboard-container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <img src="../Assets/logo.png" alt="Logo" class="dashboard-logo">
+                <span class="dashboard-title">AcademiRecord</span>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="dean-dashboard.html" class="nav-item active">
+                    <i class="fas fa-th-large"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="dean-marks-approval.html" class="nav-item">
+                    <i class="fas fa-check-circle"></i>
+                    <span>Marks Approval</span>
+                </a>
+                <a href="dean-marks-analysis.html" class="nav-item">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Marks Analysis</span>
+                </a>
+                <a href="dean-departments.html" class="nav-item">
+                    <i class="fas fa-building"></i>
+                    <span>Departments</span>
+                </a>
+                <a href="dean-hods.html" class="nav-item">
+                    <i class="fas fa-user-tie"></i>
+                    <span>HOD Management</span>
+                </a>
+                <a href="dean-reports.html" class="nav-item">
+                    <i class="fas fa-file-alt"></i>
+                    <span>Reports</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <button class="theme-toggle" title="Toggle dark/light theme">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <button class="logout-btn" onclick="location.href='../login.html'">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </button>
+            </div>
+        </aside>
+
+        <main class="dashboard-main">
+            <header class="dashboard-header">
+                <div class="header-search">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search marks, departments...">
+                </div>
+                <div class="header-right">
+                    <div class="notifications">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-badge">5</span>
+                    </div>
+                    <div class="user-profile" onclick="openUserModal()">
+                        <div class="profile-icon">
+                            <i class="fas fa-user-circle"></i>
+                        </div>
+                        <span class="user-name">Dr. John Smith</span>
+                    </div>
+                </div>
+            </header>
+
+            <div class="dashboard-content">
+                <h1 class="dashboard-title">Marks Management Dashboard</h1>
+                
+                <div class="filter-bar">
+                    <div>
+                        <span class="filter-label">Filter by:</span>
+                        <select class="filter-select" id="viewByFilter">
+                            <option value="trimester">Trimester</option>
+                            <option value="academic_year">Academic Year</option>
+                            <option value="level">Level</option>
+                        </select>
+                    </div>
+                    <div>
+                        <span class="filter-label">Trimester:</span>
+                        <select class="filter-select" id="trimesterFilter">
+                            <option value="1">Trimester 1</option>
+                            <option value="2">Trimester 2</option>
+                            <option value="3">Trimester 3</option>
+                        </select>
+                    </div>
+                    <div>
+                        <span class="filter-label">Academic Year:</span>
+                        <select class="filter-select" id="yearFilter">
+                            <option value="2023-2024">2023-2024</option>
+                            <option value="2022-2023">2022-2023</option>
+                            <option value="2021-2022">2021-2022</option>
+                        </select>
+                    </div>
+                    <div>
+                        <span class="filter-label">Department:</span>
+                        <select class="filter-select" id="departmentFilter">
+                            <option value="all">All Departments</option>
+                            <option value="cs">Computer Science</option>
+                            <option value="ee">Electrical Engineering</option>
+                            <option value="ba">Business Administration</option>
+                            <option value="math">Mathematics</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="summary-cards">
+                    <div class="summary-card">
+                        <div class="summary-icon pending">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="summary-info">
+                            <h3>12</h3>
+                            <p>Pending Marks Approval</p>
+                        </div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="summary-icon approved">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="summary-info">
+                            <h3>48</h3>
+                            <p>Approved Marks</p>
+                        </div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="summary-icon rejected">
+                            <i class="fas fa-times-circle"></i>
+                        </div>
+                        <div class="summary-info">
+                            <h3>5</h3>
+                            <p>Rejected Marks</p>
+                        </div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="summary-icon total">
+                            <i class="fas fa-clipboard-list"></i>
+                        </div>
+                        <div class="summary-info">
+                            <h3>65</h3>
+                            <p>Total Courses</p>
+                        </div>
+                    </div>
+                </div>
+
+                <h2 class="section-title">Recent Marks Submissions</h2>
+                <table class="marks-table">
+                    <thead>
+                        <tr>
+                            <th>Course Code</th>
+                            <th>Course Name</th>
+                            <th>Department</th>
+                            <th>Lecturer</th>
+                            <th>Students</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr onclick="openViewDetailsModal('CS101', 'Introduction to Programming', 'Computer Science', 'Dr. Alan Smith', 'Pending')" style="cursor: pointer;">
+                            <td>CS101</td>
+                            <td>Introduction to Programming</td>
+                            <td>Computer Science</td>
+                            <td>Dr. Alan Smith</td>
+                            <td>45</td>
+                            <td><span class="status-badge status-pending">Pending</span></td>
+                        </tr>
+                        <tr onclick="openViewDetailsModal('MATH201', 'Linear Algebra', 'Mathematics', 'Prof. Jennifer Adams', 'Pending')" style="cursor: pointer;">
+                            <td>MATH201</td>
+                            <td>Linear Algebra</td>
+                            <td>Mathematics</td>
+                            <td>Prof. Jennifer Adams</td>
+                            <td>38</td>
+                            <td><span class="status-badge status-pending">Pending</span></td>
+                        </tr>
+                        <tr onclick="openViewDetailsModal('BA201', 'Marketing Fundamentals', 'Business Administration', 'Prof. David Brown', 'Approved')" style="cursor: pointer;">
+                            <td>BA201</td>
+                            <td>Marketing Fundamentals</td>
+                            <td>Business Administration</td>
+                            <td>Prof. David Brown</td>
+                            <td>48</td>
+                            <td><span class="status-badge status-approved">Approved</span></td>
+                        </tr>
+                        <tr onclick="openViewDetailsModal('EE301', 'Circuit Analysis', 'Electrical Engineering', 'Dr. Michael Wilson', 'Approved')" style="cursor: pointer;">
+                            <td>EE301</td>
+                            <td>Circuit Analysis</td>
+                            <td>Electrical Engineering</td>
+                            <td>Dr. Michael Wilson</td>
+                            <td>32</td>
+                            <td><span class="status-badge status-approved">Approved</span></td>
+                        </tr>
+                        <tr onclick="openViewDetailsModal('CS202', 'Data Structures', 'Computer Science', 'Prof. Sarah Johnson', 'Rejected')" style="cursor: pointer;">
+                            <td>CS202</td>
+                            <td>Data Structures</td>
+                            <td>Computer Science</td>
+                            <td>Prof. Sarah Johnson</td>
+                            <td>41</td>
+                            <td><span class="status-badge status-rejected">Rejected</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+
+    <!-- User Profile Modal -->
+    <div class="user-modal" id="userModal">
+        <div class="user-modal-content">
+            <button class="close-modal" onclick="closeUserModal()">
+                <i class="fas fa-times"></i>
+            </button>
+            <div class="user-modal-header">
+                <div class="user-modal-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="user-modal-info">
+                    <h3>Dr. John Smith</h3>
+                    <span class="user-modal-role">Dean of Faculty</span>
+                </div>
+            </div>
+            <div class="user-modal-tabs">
+                <div class="user-modal-tab active" data-tab="profile">Profile</div>
+                <div class="user-modal-tab" data-tab="security">Security</div>
+                <div class="user-modal-tab" data-tab="notifications">Notifications</div>
+            </div>
+            <div class="user-modal-content-tab active" id="profile-tab">
+                <form>
+                    <div class="form-group">
+                        <label for="modal-email">Email</label>
+                        <input type="email" id="modal-email" value="john.smith@university.edu" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="modal-phone">Phone</label>
+                        <input type="tel" id="modal-phone" value="+1 (555) 123-4567">
+                    </div>
+                    <div class="form-group">
+                        <label for="modal-department">Department</label>
+                        <input type="text" id="modal-department" value="Faculty of Science and Technology" readonly>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="cancel-btn" onclick="closeUserModal()">Cancel</button>
+                        <button type="submit" class="save-btn">Save Changes</button>
+                    </div>
+                </form>
+            </div>
+            <div class="user-modal-content-tab" id="security-tab">
+                <form>
+                    <div class="form-group">
+                        <label for="modal-current-password">Current Password</label>
+                        <input type="password" id="modal-current-password" placeholder="Enter your current password">
+                    </div>
+                    <div class="form-group">
+                        <label for="modal-new-password">New Password</label>
+                        <input type="password" id="modal-new-password" placeholder="Enter new password">
+                    </div>
+                    <div class="form-group">
+                        <label for="modal-confirm-password">Confirm New Password</label>
+                        <input type="password" id="modal-confirm-password" placeholder="Confirm new password">
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="cancel-btn" onclick="closeUserModal()">Cancel</button>
+                        <button type="submit" class="save-btn">Change Password</button>
+                    </div>
+                </form>
+            </div>
+            <div class="user-modal-content-tab" id="notifications-tab">
+                <div class="toggle-option">
+                    <span class="toggle-label">Email Notifications</span>
+                    <label class="toggle-switch">
+                        <input type="checkbox" checked>
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                <div class="toggle-option">
+                    <span class="toggle-label">Marks Submission Alerts</span>
+                    <label class="toggle-switch">
+                        <input type="checkbox" checked>
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                <div class="toggle-option">
+                    <span class="toggle-label">Department Updates</span>
+                    <label class="toggle-switch">
+                        <input type="checkbox" checked>
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                <div class="toggle-option">
+                    <span class="toggle-label">System Announcements</span>
+                    <label class="toggle-switch">
+                        <input type="checkbox" checked>
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="cancel-btn" onclick="closeUserModal()">Cancel</button>
+                    <button type="submit" class="save-btn">Save Preferences</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- View Details Modal -->
+    <div class="user-modal" id="viewDetailsModal">
+        <div class="user-modal-content">
+            <button class="close-modal" onclick="closeViewDetailsModal()">
+                <i class="fas fa-times"></i>
+            </button>
+            <h2 class="modal-title">Course Details</h2>
+            <div class="course-details">
+                <div class="form-group">
+                    <label>Course Code:</label>
+                    <p id="viewCourseCode"></p>
+                </div>
+                <div class="form-group">
+                    <label>Course Name:</label>
+                    <p id="viewCourseName"></p>
+                </div>
+                <div class="form-group">
+                    <label>Department:</label>
+                    <p id="viewDepartment"></p>
+                </div>
+                <div class="form-group">
+                    <label>Lecturer:</label>
+                    <p id="viewLecturer"></p>
+                </div>
+                <div class="form-group">
+                    <label>Status:</label>
+                    <p><span id="viewStatus" class="status-indicator"></span></p>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button class="modal-btn approve" onclick="openApproveModal()">Approve Marks</button>
+                <button class="modal-btn reject" onclick="openRejectModal()">Reject Marks</button>
+                <button class="cancel-btn" onclick="closeViewDetailsModal()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Approve Modal -->
+    <div class="user-modal" id="approveModal">
+        <div class="user-modal-content">
+            <button class="close-modal" onclick="closeApproveModal()">
+                <i class="fas fa-times"></i>
+            </button>
+            <h2 class="modal-title">Approve Marks</h2>
+            <p>Are you sure you want to approve marks for <strong id="approveCourseCode"></strong> - <strong id="approveCourseName"></strong>?</p>
+            
+            <div class="form-group">
+                <label for="approveComment">Comments (Optional):</label>
+                <textarea id="approveComment" rows="4" placeholder="Add any comments or feedback..."></textarea>
+            </div>
+            
+            <div class="modal-actions">
+                <button class="modal-btn approve" onclick="confirmApprove()">Confirm Approval</button>
+                <button class="cancel-btn" onclick="closeApproveModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Reject Modal -->
+    <div class="user-modal" id="rejectModal">
+        <div class="user-modal-content">
+            <button class="close-modal" onclick="closeRejectModal()">
+                <i class="fas fa-times"></i>
+            </button>
+            <h2 class="modal-title">Reject Marks</h2>
+            <p>Are you sure you want to reject marks for <strong id="rejectCourseCode"></strong> - <strong id="rejectCourseName"></strong>?</p>
+            
+            <div class="form-group">
+                <label for="rejectReason">Reason for Rejection (Required):</label>
+                <textarea id="rejectReason" rows="4" placeholder="Please provide a reason for rejection..." required></textarea>
+            </div>
+            
+            <div class="modal-actions">
+                <button class="modal-btn reject" onclick="confirmReject()">Confirm Rejection</button>
+                <button class="cancel-btn" onclick="closeRejectModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="../script.js"></script>
+    <script>
+        function openUserModal() {
+            document.getElementById('userModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeUserModal() {
+            document.getElementById('userModal').classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Tab switching in user modal
+        const modalTabs = document.querySelectorAll('.user-modal-tab');
+        const modalContentTabs = document.querySelectorAll('.user-modal-content-tab');
+
+        modalTabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                // Remove active class from all tabs
+                modalTabs.forEach(t => t.classList.remove('active'));
+                modalContentTabs.forEach(c => c.classList.remove('active'));
+                
+                // Add active class to clicked tab
+                tab.classList.add('active');
+                
+                // Show the selected content tab
+                const tabId = tab.getAttribute('data-tab');
+                document.getElementById(`${tabId}-tab`).classList.add('active');
+            });
+        });
+
+        // Close modal when clicking outside
+        document.getElementById('userModal').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('userModal')) {
+                closeUserModal();
+            }
+        });
+
+        // Filter functionality
+        document.getElementById('viewByFilter').addEventListener('change', function() {
+            console.log('View by:', this.value);
+            // Here you would implement the logic to change the view
+        });
+
+        document.getElementById('trimesterFilter').addEventListener('change', function() {
+            console.log('Trimester:', this.value);
+            // Here you would implement the logic to filter by trimester
+        });
+
+        document.getElementById('yearFilter').addEventListener('change', function() {
+            console.log('Academic Year:', this.value);
+            // Here you would implement the logic to filter by academic year
+        });
+
+        document.getElementById('departmentFilter').addEventListener('change', function() {
+            console.log('Department:', this.value);
+            // Here you would implement the logic to filter by department
+        });
+
+        // Make summary cards clickable
+        document.addEventListener('DOMContentLoaded', function() {
+            // Pending approvals card
+            const pendingCard = document.querySelector('.summary-icon.pending').closest('.summary-card');
+            pendingCard.style.cursor = 'pointer';
+            pendingCard.addEventListener('click', function() {
+                window.location.href = 'dean-marks-approval.html?status=pending';
+            });
+            
+            // Approved marks card
+            const approvedCard = document.querySelector('.summary-icon.approved').closest('.summary-card');
+            approvedCard.style.cursor = 'pointer';
+            approvedCard.addEventListener('click', function() {
+                window.location.href = 'dean-marks-approval.html?status=approved';
+            });
+            
+            // Rejected marks card
+            const rejectedCard = document.querySelector('.summary-icon.rejected').closest('.summary-card');
+            rejectedCard.style.cursor = 'pointer';
+            rejectedCard.addEventListener('click', function() {
+                window.location.href = 'dean-marks-approval.html?status=rejected';
+            });
+            
+            // Total departments card
+            const totalCard = document.querySelector('.summary-icon.total').closest('.summary-card');
+            totalCard.style.cursor = 'pointer';
+            totalCard.addEventListener('click', function() {
+                window.location.href = 'dean-departments.html';
+            });
+            
+            // Add click handlers to action buttons
+            const viewButtons = document.querySelectorAll('.action-btn[title="View Details"]');
+            viewButtons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const row = this.closest('tr');
+                    const courseCode = row.cells[0].textContent;
+                    const courseName = row.cells[1].textContent;
+                    const department = row.cells[2].textContent;
+                    const lecturer = row.cells[3].textContent;
+                    const status = row.cells[5].textContent;
+                    
+                    openViewDetailsModal(courseCode, courseName, department, lecturer, status);
+                });
+            });
+            
+            const downloadButtons = document.querySelectorAll('.action-btn[title="Download"]');
+            downloadButtons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const row = this.closest('tr');
+                    const courseCode = row.cells[0].textContent;
+                    alert(`Downloading marks for ${courseCode}...`);
+                });
+            });
+            
+            const printButtons = document.querySelectorAll('.action-btn[title="Print"]');
+            printButtons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const row = this.closest('tr');
+                    const courseCode = row.cells[0].textContent;
+                    alert(`Printing marks for ${courseCode}...`);
+                });
+            });
+            
+            const revisionButtons = document.querySelectorAll('.action-btn[title="Request Revision"]');
+            revisionButtons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const row = this.closest('tr');
+                    const courseCode = row.cells[0].textContent;
+                    alert(`Requesting revision for ${courseCode}...`);
+                });
+            });
+            
+            const commentButtons = document.querySelectorAll('.action-btn[title="Comments"]');
+            commentButtons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const row = this.closest('tr');
+                    const courseCode = row.cells[0].textContent;
+                    alert(`Viewing comments for ${courseCode}...`);
+                });
+            });
+        });
+        
+        function openViewDetailsModal(courseCode, courseName, department, lecturer, status) {
+            document.getElementById('viewCourseCode').textContent = courseCode;
+            document.getElementById('viewCourseName').textContent = courseName;
+            document.getElementById('viewDepartment').textContent = department;
+            document.getElementById('viewLecturer').textContent = lecturer;
+            
+            const statusElement = document.getElementById('viewStatus');
+            statusElement.textContent = status;
+            
+            // Remove all status classes
+            statusElement.classList.remove('status-approved', 'status-pending', 'status-rejected');
+            
+            // Add appropriate status class
+            if (status.toLowerCase().includes('approved')) {
+                statusElement.classList.add('status-approved');
+            } else if (status.toLowerCase().includes('pending')) {
+                statusElement.classList.add('status-pending');
+            } else if (status.toLowerCase().includes('rejected')) {
+                statusElement.classList.add('status-rejected');
+            }
+            
+            // Store course info for approve/reject modals
+            sessionStorage.setItem('currentCourseCode', courseCode);
+            sessionStorage.setItem('currentCourseName', courseName);
+            
+            document.getElementById('viewDetailsModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closeViewDetailsModal() {
+            document.getElementById('viewDetailsModal').classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        function openApproveModal() {
+            const courseCode = sessionStorage.getItem('currentCourseCode');
+            const courseName = sessionStorage.getItem('currentCourseName');
+            
+            document.getElementById('approveCourseCode').textContent = courseCode;
+            document.getElementById('approveCourseName').textContent = courseName;
+            
+            closeViewDetailsModal();
+            document.getElementById('approveModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeApproveModal() {
+            document.getElementById('approveModal').classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        function confirmApprove() {
+            const courseCode = document.getElementById('approveCourseCode').textContent;
+            const comment = document.getElementById('approveComment').value;
+            
+            console.log(`Approved marks for ${courseCode} with comment: ${comment}`);
+            
+            // In a real application, you would make an API call here
+            
+            closeApproveModal();
+            
+            // Show toast notification
+            showToast(`Marks for ${courseCode} have been approved successfully!`, 'success');
+            
+            // Refresh the page after a delay
+            setTimeout(() => {
+                location.reload();
+            }, 2000);
+        }
+
+        function openRejectModal() {
+            const courseCode = sessionStorage.getItem('currentCourseCode');
+            const courseName = sessionStorage.getItem('currentCourseName');
+            
+            document.getElementById('rejectCourseCode').textContent = courseCode;
+            document.getElementById('rejectCourseName').textContent = courseName;
+            
+            closeViewDetailsModal();
+            document.getElementById('rejectModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeRejectModal() {
+            document.getElementById('rejectModal').classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        function confirmReject() {
+            const courseCode = document.getElementById('rejectCourseCode').textContent;
+            const reason = document.getElementById('rejectReason').value;
+            
+            if (!reason.trim()) {
+                showToast('Please provide a reason for rejection.', 'error');
+                return;
+            }
+            
+            console.log(`Rejected marks for ${courseCode} with reason: ${reason}`);
+            
+            // In a real application, you would make an API call here
+            
+            closeRejectModal();
+            
+            // Show toast notification
+            showToast(`Marks for ${courseCode} have been rejected.`, 'error');
+            
+            // Refresh the page after a delay
+            setTimeout(() => {
+                location.reload();
+            }, 2000);
+        }
+
+        // Add toast notification function
+        function showToast(message, type = 'info') {
+            // Create toast element
+            const toast = document.createElement('div');
+            toast.className = `toast toast-${type}`;
+            toast.innerHTML = `
+                <div class="toast-content">
+                    <i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle'}"></i>
+                    <span>${message}</span>
+                </div>
+                <button class="toast-close" onclick="this.parentElement.remove()">
+                    <i class="fas fa-times"></i>
+                </button>
+            `;
+            
+            // Add to document
+            document.body.appendChild(toast);
+            
+            // Automatically remove after 5 seconds
+            setTimeout(() => {
+                if (toast.parentElement) {
+                    toast.remove();
+                }
+            }, 5000);
+        }
+    </script>
+</body>
+
+</html>

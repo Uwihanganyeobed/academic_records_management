@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reports - Dean Dashboard</title>
+    <link rel="apple-touch-icon" sizes="180x180" href="../assets/logo.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="../assets/logo.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../assets/logo.png">
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="../dashboard.css">
+    <link rel="stylesheet" href="dean.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Itim&family=Outfit:wght@100..900&display=swap" rel="stylesheet">
+    <style>
+        .filter-bar {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            background-color: var(--card-background);
+            padding: 1rem;
+            border-radius: var(--border-radius);
+            box-shadow: 0 2px 4px var(--shadow-color);
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .filter-label {
+            font-weight: 500;
+            color: var(--text-color);
+        }
+
+        .filter-select {
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--shadow-color);
+            border-radius: var(--border-radius);
+            background-color: var(--background-color);
+            color: var(--text-color);
+            min-width: 150px;
+        }
+
+        .reports-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .report-card {
+            background-color: var(--card-background);
+            border-radius: var(--border-radius);
+            box-shadow: 0 2px 4px var(--shadow-color);
+            padding: 1.5rem;
+            transition: var(--transition);
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .report-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px var(--shadow-color);
+        }
+
+        .report-icon {
+            font-size: 2rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .report-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-color);
+        }
+
+        .report-description {
+            color: var(--text-light);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            flex-grow: 1;
+        }
+
+        .report-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.8rem;
+            color: var(--text-light);
+        }
+
+        .recent-reports {
+            margin-top: 2rem;
+        }
+
+        .section-title {
+            font-family: var(--heading-font);
+            color: var(--text-color);
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+        }
+
+        .reports-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 2rem;
+            background-color: var(--card-background);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: 0 2px 4px var(--shadow-color);
+        }
+
+        .reports-table th,
+        .reports-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--shadow-color);
+        }
+
+        .reports-table th {
+            background-color: var(--primary-color);
+            color: white;
+            font-weight: 500;
+        }
+
+        .reports-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .reports-table tr {
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .reports-table tr:hover td {
+            background-color: var(--background-color);
+        }
+
+        .download-btn {
+            padding: 0.3rem 0.8rem;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .download-btn:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .loading-indicator {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            color: white;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+
+<body class="light-mode">
+    <div class="dashboard-container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <img src="../Assets/logo.png" alt="Logo" class="dashboard-logo">
+                <span class="dashboard-title">AcademiRecord</span>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="dean-dashboard.html" class="nav-item">
+                    <i class="fas fa-th-large"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="dean-marks-approval.html" class="nav-item">
+                    <i class="fas fa-check-circle"></i>
+                    <span>Marks Approval</span>
+                </a>
+                <a href="dean-marks-analysis.html" class="nav-item">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Marks Analysis</span>
+                </a>
+                <a href="dean-departments.html" class="nav-item">
+                    <i class="fas fa-building"></i>
+                    <span>Departments</span>
+                </a>
+                <a href="dean-hods.html" class="nav-item">
+                    <i class="fas fa-user-tie"></i>
+                    <span>HOD Management</span>
+                </a>
+                <a href="dean-reports.html" class="nav-item active">
+                    <i class="fas fa-file-alt"></i>
+                    <span>Reports</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <button class="theme-toggle" title="Toggle dark/light theme">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <button class="logout-btn" onclick="location.href='../login.html'">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </button>
+            </div>
+        </aside>
+
+        <main class="dashboard-main">
+            <header class="dashboard-header">
+                <div class="header-search">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search reports...">
+                </div>
+                <div class="header-right">
+                    <div class="notifications">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-badge">3</span>
+                    </div>
+                    <div class="user-profile">
+                        <div class="profile-icon">
+                            <i class="fas fa-user-circle"></i>
+                        </div>
+                        <span class="user-name">Dr. John Smith</span>
+                    </div>
+                </div>
+            </header>
+
+            <div class="dashboard-content">
+                <h1 class="page-title">Reports</h1>
+
+                <div class="filter-bar">
+                    <div>
+                        <span class="filter-label">Academic Year:</span>
+                        <select class="filter-select" id="yearFilter">
+                            <option value="2023-2024">2023-2024</option>
+                            <option value="2022-2023">2022-2023</option>
+                            <option value="2021-2022">2021-2022</option>
+                        </select>
+                    </div>
+                    <div>
+                        <span class="filter-label">Trimester:</span>
+                        <select class="filter-select" id="trimesterFilter">
+                            <option value="1">Trimester 1</option>
+                            <option value="2">Trimester 2</option>
+                            <option value="3">Trimester 3</option>
+                            <option value="all">All Trimesters</option>
+                        </select>
+                    </div>
+                    <div>
+                        <span class="filter-label">Department:</span>
+                        <select class="filter-select" id="departmentFilter">
+                            <option value="all">All Departments</option>
+                            <option value="cs">Computer Science</option>
+                            <option value="ee">Electrical Engineering</option>
+                            <option value="ba">Business Administration</option>
+                            <option value="math">Mathematics</option>
+                            <option value="physics">Physics</option>
+                        </select>
+                    </div>
+                    <div>
+                        <span class="filter-label">Format:</span>
+                        <select class="filter-select" id="formatFilter">
+                            <option value="pdf">PDF</option>
+                            <option value="xlsx">Excel</option>
+                            <option value="csv">CSV</option>
+                            <option value="html">HTML</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="reports-grid">
+                    <!-- Academic Transcript Report -->
+                    <div class="report-card" onclick="viewReport('../reports/academic_transcript.html')">
+                        <div class="report-icon">
+                            <i class="fas fa-file-alt"></i>
+                        </div>
+                        <h3 class="report-title">Academic Transcript</h3>
+                        <p class="report-description">
+                            Complete academic record for students showing all courses and grades.
+                        </p>
+                        <div class="report-meta">
+                            <span>PDF, HTML</span>
+                            <span>Updated instantly</span>
+                        </div>
+                    </div>
+
+                    <!-- Provisional Exam Results Report -->
+                    <div class="report-card" onclick="viewReport('../reports/provisional_exam_results.html')">
+                        <div class="report-icon">
+                            <i class="fas fa-clipboard-list"></i>
+                        </div>
+                        <h3 class="report-title">Provisional Exam Results</h3>
+                        <p class="report-description">
+                            Preliminary examination results for departments pending final approval.
+                        </p>
+                        <div class="report-meta">
+                            <span>PDF, HTML</span>
+                            <span>Updated after exams</span>
+                        </div>
+                    </div>
+
+                    <!-- Semester Marks Summary Report -->
+                    <div class="report-card" onclick="generateReport('semester-marks-summary')">
+                        <div class="report-icon">
+                            <i class="fas fa-chart-pie"></i>
+                        </div>
+                        <h3 class="report-title">Semester Marks Summary</h3>
+                        <p class="report-description">
+                            Overview of all marks for the selected semester across departments.
+                        </p>
+                        <div class="report-meta">
+                            <span>PDF, Excel, CSV</span>
+                            <span>Updated weekly</span>
+                        </div>
+                    </div>
+                    <!-- GPA Distribution Report -->
+                    <div class="report-card" onclick="generateReport('gpa-distribution')">
+                        <div class="report-icon">
+                            <i class="fas fa-chart-pie"></i>
+                        </div>
+                        <h3 class="report-title">GPA Distribution</h3>
+                        <p class="report-description">
+                            Distribution of student GPAs across departments and programs.
+                        </p>
+                        <div class="report-meta">
+                            <span>PDF, Excel</span>
+                            <span>Updated weekly</span>
+                        </div>
+                    </div>
+
+                    <!-- Marks Approval Status Report -->
+                    <div class="report-card" onclick="generateReport('marks-approval-status')">
+                        <div class="report-icon">
+                            <i class="fas fa-clipboard-check"></i>
+                        </div>
+                        <h3 class="report-title">Marks Approval Status</h3>
+                        <p class="report-description">
+                            Current status of marks approval process across all departments.
+                        </p>
+                        <div class="report-meta">
+                            <span>PDF, Excel</span>
+                            <span>Updated daily</span>
+                        </div>
+                    </div>
+
+                    <!-- Academic Progress Report -->
+                    <div class="report-card" onclick="generateReport('academic-progress')">
+                        <div class="report-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <h3 class="report-title">Academic Progress</h3>
+                        <p class="report-description">
+                            Trend analysis of academic performance over multiple semesters.
+                        </p>
+                        <div class="report-meta">
+                            <span>PDF, Excel</span>
+                            <span>Updated monthly</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="recent-reports">
+                    <h2 class="section-title">Recently Generated Reports</h2>
+                    <table class="reports-table">
+                        <thead>
+                            <tr>
+                                <th>Report Name</th>
+                                <th>Generated Date</th>
+                                <th>Academic Period</th>
+                                <th>Format</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr onclick="viewReport('semester-marks-summary-2023-t1.pdf')">
+                                <td>Semester Marks Summary</td>
+                                <td>Today, 9:30 AM</td>
+                                <td>2023-2024, Trimester 1</td>
+                                <td>PDF</td>
+                                <td>
+                                    <button class="download-btn">
+                                        <i class="fas fa-download"></i>
+                                        <span>Download</span>
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr onclick="viewReport('department-performance-cs-2023-t1.pdf')">
+                                <td>Department Performance - Computer Science</td>
+                                <td>Yesterday, 2:15 PM</td>
+                                <td>2023-2024, Trimester 1</td>
+                                <td>PDF</td>
+                                <td>
+                                    <button class="download-btn">
+                                        <i class="fas fa-download"></i>
+                                        <span>Download</span>
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr onclick="viewReport('course-performance-all-2023-t1.xlsx')">
+                                <td>Course Performance - All Departments</td>
+                                <td>Oct 16, 2023</td>
+                                <td>2023-2024, Trimester 1</td>
+                                <td>Excel</td>
+                                <td>
+                                    <button class="download-btn">
+                                        <i class="fas fa-download"></i>
+                                        <span>Download</span>
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr onclick="viewReport('gpa-distribution-2023-t1.pdf')">
+                                <td>GPA Distribution</td>
+                                <td>Oct 15, 2023</td>
+                                <td>2023-2024, Trimester 1</td>
+                                <td>PDF</td>
+                                <td>
+                                    <button class="download-btn">
+                                        <i class="fas fa-download"></i>
+                                        <span>Download</span>
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr onclick="viewReport('marks-approval-status-2023-t1.pdf')">
+                                <td>Marks Approval Status</td>
+                                <td>Today, 8:45 AM</td>
+                                <td>2023-2024, Trimester 1</td>
+                                <td>PDF</td>
+                                <td>
+                                    <button class="download-btn">
+                                        <i class="fas fa-download"></i>
+                                        <span>Download</span>
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="../script.js"></script>
+    <script>
+        function viewReport(reportUrl) {
+            // For existing report templates like academic transcript and provisional results
+            if (reportUrl.includes('.html')) {
+                window.open(reportUrl, '_blank');
+                return;
+            }
+            
+            // For generated reports (PDF, Excel, etc.)
+            console.log(`Viewing report: ${reportUrl}`);
+            
+            // Check if it's a PDF file
+            if (reportUrl.endsWith('.pdf')) {
+                // In a real application, this would open the PDF in a new tab
+                window.open(`../reports/${reportUrl}`, '_blank');
+            } else {
+                // For other file types, trigger a download
+                const link = document.createElement('a');
+                link.href = `../reports/${reportUrl}`;
+                link.download = reportUrl;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }
+        }
+
+        function generateReport(reportType) {
+            const year = document.getElementById('yearFilter').value;
+            const trimester = document.getElementById('trimesterFilter').value;
+            const department = document.getElementById('departmentFilter').value;
+            const format = document.getElementById('formatFilter').value || 'pdf';
+            
+            console.log(`Generating ${reportType} report for ${year}, Trimester ${trimester}, Department: ${department}, Format: ${format}`);
+            
+            // Show a loading indicator
+            const loadingIndicator = document.createElement('div');
+            loadingIndicator.className = 'loading-indicator';
+            loadingIndicator.innerHTML = `
+                <div class="loading-spinner"></div>
+                <p>Generating ${reportType} report...</p>
+            `;
+            document.body.appendChild(loadingIndicator);
+            
+            // In a real application, this would make an API call to generate the report
+            // For demonstration, we'll simulate a delay
+            setTimeout(() => {
+                // Remove loading indicator
+                document.body.removeChild(loadingIndicator);
+                
+                // Show success message
+                alert(`Your ${reportType} report is ready! You can find it in the Recently Generated Reports section.`);
+                
+                // In a real application, you would update the table with the new report
+                const reportsTable = document.querySelector('.reports-table tbody');
+                const newRow = document.createElement('tr');
+                const now = new Date();
+                const timeString = now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                
+                newRow.innerHTML = `
+                    <td>${reportType.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}</td>
+                    <td>Today, ${timeString}</td>
+                    <td>${year}, Trimester ${trimester}</td>
+                    <td>${format.toUpperCase()}</td>
+                    <td>
+                        <button class="download-btn" onclick="event.stopPropagation(); viewReport('${reportType}-${year}-t${trimester}.${format}')">
+                            <i class="fas fa-download"></i>
+                            <span>Download</span>
+                        </button>
+                    </td>
+                `;
+                
+                newRow.onclick = function() {
+                    viewReport(`${reportType}-${year}-t${trimester}.${format}`);
+                };
+                
+                // Add the new row at the top of the table
+                reportsTable.insertBefore(newRow, reportsTable.firstChild);
+            }, 2000);
+        }
+        
+        // Filter functionality
+        document.getElementById('yearFilter').addEventListener('change', function() {
+            console.log('Academic Year:', this.value);
+            // Here you would implement the logic to filter reports by academic year
+        });
+
+        document.getElementById('trimesterFilter').addEventListener('change', function() {
+            console.log('Trimester:', this.value);
+            // Here you would implement the logic to filter reports by trimester
+        });
+
+        document.getElementById('departmentFilter').addEventListener('change', function() {
+            console.log('Department:', this.value);
+            // Here you would implement the logic to filter reports by department
+        });
+    </script>
+</body>
+
+</html> 
